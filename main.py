@@ -34,10 +34,8 @@ snipe_rate_limit = int(config['snipe-it']['rate_limit'])
 
 apple_image_check = config['snipe-it'].getboolean('apple_image_check')
 
-
-
 # Set the token for the Mosyle Api
-mosyle = Mosyle(config['mosyle']['token'], config['mosyle']['url'], config['mosyle']['user'], config['mosyle']['password'])
+mosyle = Mosyle(config['mosyle']['token'], config['mosyle']['url'], config['mosyle']['jwt_secret'])
 
 # Set the call type for Mosyle
 calltype = config['mosyle']['calltype']
@@ -52,7 +50,9 @@ for deviceType in deviceTypes:
         mosyle_response = mosyle.listTimestamp(ts, ts, deviceType).json()
     else:
         mosyle_response = mosyle.list(deviceType).json()
-        
+    
+    print(mosyle_response)
+    
     #print(mosyle_response)
     if 'status' in mosyle_response:
         if mosyle_response['status'] != "OK":

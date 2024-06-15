@@ -1,19 +1,31 @@
 import base64
 import requests
+import jwt
+import time
 
 class Mosyle:
 	
 	# Create Mosyle instance
-	def __init__(self, key, url = "https://businessapi.mosyle.com/v1", user = "", password = ""):
+	def __init__(self, key="access_token", url = "https://businessapi.mosyle.com/v1", jwt_secret = "jwt_secret"):
 		# Attribute the variable to the instance
 		self.url = url
 		self.request = requests.Session()
-		self.request.headers["accesstoken"] = key
-		#base64 encode username and password for basic auth
-		userpass = user + ':' + password
-		encoded_u = base64.b64encode(userpass.encode()).decode()
-		self.request.headers["Authorization"] = "Basic %s" % encoded_u
+		self.jwt_secret = jwt_secret
 
+		# Generate a JWT token
+		payload = {
+            "iss": "your_issuer",
+            "sub": "your_subject",
+            "exp": int(time.time()) + 3600  # Token expires in 1 hour
+        }
+		self.jwt_token = jwt.encode(payload, self.jwt_secret, algorithm="HS256")
+		print(self.jwt_token)
+	    # Set the JWT token in the request headers
+		self.request.headers = {
+			"Authorization": f"Bearer {self.jwt_token}",
+			"Content-Type": "application/json",
+			"accessToken": self.jwt_token
+		}
 		
 	# Create variables requests
 	def list(self, os):
